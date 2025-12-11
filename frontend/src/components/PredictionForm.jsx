@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PredictionForm() {
   const [form, setForm] = useState({
@@ -39,7 +40,7 @@ export default function PredictionForm() {
     };
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/predict", payload);
+      const res = await axios.post(`${API_URL}/predict`, payload);
       setResult(res.data.diameter_prediction ?? res.data);
     } catch (error) {
       console.error(error);
