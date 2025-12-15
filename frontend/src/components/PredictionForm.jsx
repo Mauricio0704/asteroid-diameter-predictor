@@ -2,17 +2,66 @@ import { useState } from "react";
 import axios from "axios";
 const API_URL = import.meta.env.VITE_API_URL;
 
+const FEATURE_CONFIG = {
+  absolute_magnitude: {
+    label: "Absolute Magnitude",
+    min: 3,
+    max: 30,
+    step: 0.01,
+    info: "Intrinsic brightness of the asteroid. Higher values mean dimmer objects."
+  },
+  albedo: {
+    label: "Albedo",
+    min: 0,
+    max: 1,
+    step: 0.001,
+    info: "Reflectivity of the asteroid surface. 0 = very dark, 1 = perfectly reflective."
+  },
+  eccentricity: {
+    label: "Eccentricity",
+    min: 0,
+    max: 1,
+    step: 0.001,
+    info: "How elongated the orbit is. 0 = circular, values near 1 are very elongated."
+  },
+  perihelion_distance: {
+    label: "Perihelion (AU)",
+    min: 0,
+    step: 0.01,
+    info: "Closest distance from the asteroid to the Sun."
+  },
+  inclination: {
+    label: "Inclination (°)",
+    min: 0,
+    max: 180,
+    step: 0.1,
+    info: "Tilt of the asteroid's orbit relative to the ecliptic plane."
+  },
+  aphelion_distance: {
+    label: "Aphelion (AU)",
+    min: 0,
+    step: 0.01,
+    info: "Farthest distance from the asteroid to the Sun."
+  },
+  mean_motion: {
+    label: "Mean Motion",
+    min: 0,
+    step: 0.0001,
+    info: "Average angular speed of the asteroid along its orbit."
+  }
+};
+
 export default function PredictionForm() {
   const [form, setForm] = useState({
     is_neo: false,
     is_pha: false,
-    absolute_magnitude: "6.90",
-    albedo: "0.2740",
-    eccentricity: "0.1909",
-    perihelion_distance: "2.0826",
-    inclination: "5.3674",
-    aphelion_distance: "3.0654",
-    mean_motion: "0.2386",
+    absolute_magnitude: "15.13",
+    albedo: "0.131",
+    eccentricity: "0.146",
+    perihelion_distance: "2.40",
+    inclination: "10.2",
+    aphelion_distance: "3.06",
+    mean_motion: "0.2191",
     class_: "MBA",
   });
 
@@ -87,7 +136,7 @@ export default function PredictionForm() {
                 type="checkbox"
                 checked={form.is_neo}
                 onChange={() => handleToggle("is_neo")}
-                className="opacity-0 w-0 h-0"
+                className="opacity-0 w-0 h-0 peer"
               />
               <span
                 className="
@@ -140,34 +189,52 @@ export default function PredictionForm() {
         </div>
 
         {/* INPUT FIELDS */}
-        {[
-          ["absolute_magnitude", "Absolute Magnitude"],
-          ["albedo", "Albedo"],
-          ["eccentricity", "Eccentricity"],
-          ["perihelion_distance", "Perihelion (AU)"],
-          ["inclination", "Inclination (°)"],
-          ["aphelion_distance", "Aphelion (AU)"],
-          ["mean_motion", "Mean Motion"],
-        ].map(([name, label]) => (
-          <label key={name} className="flex flex-col gap-1">
-            <span className="text-xs text-[#aef9de] tracking-wide">
-              {label}
+        {Object.entries(FEATURE_CONFIG).map(([name, cfg]) => (
+        <label key={name} className="flex flex-col gap-1 relative">
+          
+          <span className="text-xs text-[#aef9de] tracking-wide flex items-center gap-1">
+            {cfg.label}
+
+            {/* Info icon */}
+            <span className="group relative cursor-pointer text-[#6fffe0]">
+              ⓘ
+              <span
+                className="
+                  absolute left-1/2 -translate-x-1/2 mt-1
+                  w-56 text-[11px] leading-snug
+                  bg-[rgba(0,20,40,0.95)]
+                  border border-[rgba(0,255,200,0.15)]
+                  text-[#d7fff2]
+                  px-2 py-1 rounded-md
+                  opacity-0 group-hover:opacity-100
+                  pointer-events-none
+                  transition-opacity
+                  z-10
+                "
+              >
+                {cfg.info}
+              </span>
             </span>
-            <input
-              name={name}
-              type="number"
-              step="any"
-              value={form[name]}
-              onChange={handleChange}
-              className="
-                px-2 py-1 rounded-md text-sm
-                bg-[rgba(0,20,40,0.65)] border border-[rgba(0,255,200,0.12)]
-                focus:outline-none focus:border-[#00ff9f]
-                focus:shadow-[0_0_8px_rgba(0,255,160,0.12)]
-              "
-            />
-          </label>
-        ))}
+          </span>
+
+          <input
+            name={name}
+            type="number"
+            min={cfg.min}
+            max={cfg.max}
+            step={cfg.step}
+            value={form[name]}
+            onChange={handleChange}
+            className="
+              px-2 py-1 rounded-md text-sm
+              bg-[rgba(0,20,40,0.65)]
+              border border-[rgba(0,255,200,0.12)]
+              focus:outline-none focus:border-[#00ff9f]
+              focus:shadow-[0_0_8px_rgba(0,255,160,0.12)]
+            "
+          />
+        </label>
+      ))}
 
         {/* Class Select */}
         <label className="flex flex-col gap-1">
@@ -184,9 +251,10 @@ export default function PredictionForm() {
             "
           >
             <option value="MBA">MBA</option>
-            <option value="AMO">AMO</option>
+            <option value="TJN">TJN</option>
+            <option value="IMB">IMB</option>
+            <option value="OMB">OMB</option>
             <option value="APO">APO</option>
-            <option value="ATE">ATE</option>
           </select>
         </label>
 
@@ -246,7 +314,7 @@ export default function PredictionForm() {
             text-[#c8fff0]
           "
         >
-          <strong>Prediction:</strong> {result} km
+          <strong>Prediction:</strong>{" "} {result != null ? Math.max(0.01, Number(result)).toFixed(2) : "--"} km
         </div>
       )}
     </div>
