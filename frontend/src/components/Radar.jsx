@@ -4,7 +4,7 @@ export default function Radar() {
       {/* Radar Container */}
       <div
         className="
-        relative w-[400px] h-[400px] rounded-full overflow-hidden
+        relative w-full md:w-[390px] aspect-square rounded-full overflow-hidden
         bg-[rgba(5,10,20,0.85)] border border-[#00ffc8]
         shadow-[0_0_20px_rgba(0,255,200,0.3),inset_0_0_25px_rgba(0,255,180,0.2)]
       "

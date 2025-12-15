@@ -22,7 +22,7 @@ def home():
     return {"message": "Asteroid prediction API running"}
 
 
-model = joblib.load("model/dt_model.joblib")
+model = joblib.load("model/final_model.joblib")
 
 
 class AsteroidInput(BaseModel):
